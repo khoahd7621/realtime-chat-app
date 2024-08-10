@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   api:
     build:
@@ -12,7 +10,7 @@ services:
     # Reflect File changes from host to container
     volumes:
       - ./api:/khoa/src/app
-      - /khoa/src/app/node_modules
+      - /khoa/src/app/node_modules/
     # RUN in debug mode: npm run start:debug --> Also start your vscode debugger
     # Run in dev mode: npm run start:dev
     command: npm run start:dev
@@ -34,7 +32,7 @@ services:
     command: npm run start
     volumes:
       - ./frontend:/khoa/frontend/src/app
-      - /khoa/frontend/src/app/node_modules
+      - /khoa/frontend/src/app/node_modules/
     ports:
       - 4200:4200
     links:
