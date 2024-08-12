@@ -6,11 +6,9 @@ import {
   HttpStatus,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { map, Observable, switchMap } from 'rxjs';
-import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { CreateUserDto } from '../model/dto/create-user.dto';
 import { LoginUserDto } from '../model/dto/login-user.dto';
 import { LoginResponseI } from '../model/login-response.interface';
@@ -33,7 +31,6 @@ export class UserController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
   @Get()
   findAll(
     @Query('page') page: number = 1,
