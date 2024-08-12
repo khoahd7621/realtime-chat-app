@@ -1,11 +1,15 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 export const authGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
+  const jwtService = inject(JwtHelperService);
 
-  // TODO: Implement real Guard when Login Component is finished
-  router.navigate(['']);
+  if (jwtService.isTokenExpired()) {
+    router.navigate(['']);
+    return false;
+  }
 
-  return false;
+  return true;
 };
