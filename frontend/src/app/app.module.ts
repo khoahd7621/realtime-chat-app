@@ -4,15 +4,16 @@ import {
   provideClientHydration,
 } from '@angular/platform-browser';
 
+import { HttpClientModule } from '@angular/common/http';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { JwtModule } from '@auth0/angular-jwt';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpClientModule } from '@angular/common/http';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { JwtModule } from '@auth0/angular-jwt';
 
 export function tokenGetter() {
-  return localStorage.getItem('nestjs_chat_app');
+  const jwtToken = localStorage.getItem('nestjs_chat_app');
+  return jwtToken ?? '';
 }
 
 @NgModule({
