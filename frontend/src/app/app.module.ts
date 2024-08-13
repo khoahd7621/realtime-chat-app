@@ -12,8 +12,16 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 export function tokenGetter() {
-  const jwtToken = localStorage.getItem('nestjs_chat_app');
-  return jwtToken ?? '';
+  // During Server-side Rendering (SSR): If your Angular application uses Angular
+  // Universal or any form of server-side rendering, localStorage will not be available
+  // because localStorage is a browser-specific feature. Code executed on the server does
+  // not have access to browser APIs
+  const isLocalStorageAvailable = typeof localStorage !== 'undefined';
+  if (isLocalStorageAvailable) {
+    const jwtToken = localStorage.getItem('nestjs_chat_app');
+    return jwtToken ?? '';
+  }
+  return '';
 }
 
 @NgModule({
