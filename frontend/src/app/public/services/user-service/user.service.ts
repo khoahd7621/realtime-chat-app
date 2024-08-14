@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { UserI } from '../../../model/user.interface';
 
@@ -9,6 +10,12 @@ import { UserI } from '../../../model/user.interface';
 })
 export class UserService {
   constructor(private http: HttpClient, private snackBar: MatSnackBar) {}
+
+  findByUsername(username: string): Observable<UserI[]> {
+    return this.http.get<UserI[]>(
+      `api/users/find-by-username?username=${username}`
+    );
+  }
 
   create(user: UserI): Observable<UserI> {
     return this.http.post<UserI>('/api/users', user).pipe(

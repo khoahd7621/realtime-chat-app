@@ -1,6 +1,9 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { MatSelectionListChange } from '@angular/material/list';
 import { PageEvent } from '@angular/material/paginator';
+import { Observable } from 'rxjs';
+
+import { RoomPaginateI } from '../../../model/room.interface';
 import { ChatService } from '../../services/chat-service/chat.service';
 
 @Component({
@@ -9,12 +12,14 @@ import { ChatService } from '../../services/chat-service/chat.service';
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
-  rooms$ = this.chatService.getMyRooms();
+  rooms$: Observable<RoomPaginateI> = this.chatService.getMyRooms();
   selectedRoom = null;
 
   constructor(private chatService: ChatService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.chatService.emitPaginateRooms(10, 0);
+  }
 
   ngAfterViewInit(): void {
     this.chatService.emitPaginateRooms(10, 0);

@@ -8,7 +8,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { map, Observable, switchMap } from 'rxjs';
+
 import { CreateUserDto } from '../model/dto/create-user.dto';
 import { LoginUserDto } from '../model/dto/login-user.dto';
 import { LoginResponseI } from '../model/login-response.interface';
@@ -24,18 +24,18 @@ export class UserController {
   ) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto): Observable<UserI> {
-    return this.userHelperService
-      .createUserDtoToEntity(createUserDto)
-      .pipe(switchMap((user: UserI) => this.userService.create(user)));
+  async create(@Body() createUserDto: CreateUserDto): Promise<UserI> {
+    const userEntity: UserI =
+      this.userHelperService.createUserDtoToEntity(createUserDto);
+    return this.userService.create(userEntity);
   }
 
   @HttpCode(HttpStatus.OK)
   @Get()
-  findAll(
+  async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
-  ): Observable<Pagination<UserI>> {
+  ): Promise<Pagination<UserI>> {
     limit = limit > 100 ? 100 : limit;
     return this.userService.findAll({
       page,
@@ -44,22 +44,21 @@ export class UserController {
     });
   }
 
+  @Get('find-by-username')
+  async findAllByUsername(@Query('username') username: string) {
+    return this.userService.findAllByUsername(username);
+  }
+
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(@Body() loginUserDto: LoginUserDto): Observable<LoginResponseI> {
-    return this.userHelperService.loginUserDtoToEntity(loginUserDto).pipe(
-      switchMap((user: UserI) =>
-        this.userService.login(user).pipe(
-          map((jwt: string) => {
-            const loginResponse: LoginResponseI = {
-              access_token: jwt,
-              token_type: 'JWT',
-              expires_in: 10000,
-            };
-            return loginResponse;
-          }),
-        ),
-      ),
-    );
+  async login(@Body() loginUserDto: LoginUserDto): Promise<LoginResponseI> {
+    const userEntity: UserI =
+      this.userHelperService.loginUserDtoToEntity(loginUserDto);
+    const jwtToken = await this.userService.login(userEntity);
+    return {
+      access_token: jwtToken,
+      token_type: 'JWT',
+      expires_in: 10000,
+    };
   }
 }
