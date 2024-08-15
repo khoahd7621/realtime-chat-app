@@ -30,4 +30,8 @@ export class ConnectedUserService {
       socketId,
     });
   }
+
+  async deleteAll() {
+    await this.connectedUserRepository.createQueryBuilder().delete().execute();
+  }
 }

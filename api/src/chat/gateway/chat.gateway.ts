@@ -1,4 +1,4 @@
-import { UnauthorizedException } from '@nestjs/common';
+import { OnModuleInit, UnauthorizedException } from '@nestjs/common';
 import {
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -11,11 +11,11 @@ import { Server, Socket } from 'socket.io';
 import { AuthService } from 'src/auth/service/auth.service';
 import { UserI } from 'src/user/model/user.interface';
 import { UserService } from 'src/user/service/user-service/user.service';
+import { ConnectedUserI } from '../model/connected-user.interface';
 import { PageI } from '../model/page.interface';
 import { RoomI } from '../model/room.interface';
 import { ConnectedUserService } from '../service/connected-user/connected-user.service';
 import { RoomService } from '../service/room-service/room.service';
-import { ConnectedUserI } from '../model/connected-user.interface';
 
 @WebSocketGateway({
   cors: {
@@ -26,7 +26,9 @@ import { ConnectedUserI } from '../model/connected-user.interface';
     ],
   },
 })
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class ChatGateway
+  implements OnGatewayConnection, OnGatewayDisconnect, OnModuleInit
+{
   @WebSocketServer()
   server: Server;
 
@@ -36,6 +38,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private roomService: RoomService,
     private connectedUserService: ConnectedUserService,
   ) {}
+
+  async onModuleInit() {
+    await this.connectedUserService.deleteAll();
+  }
 
   async handleConnection(socket: Socket) {
     try {
