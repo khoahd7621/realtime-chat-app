@@ -3,26 +3,28 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinTable,
-  ManyToMany,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { RoomEntity } from '../room/room.entity';
 
 @Entity()
-export class RoomEntity {
+export class MessageEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
-  name: string;
+  text: string;
 
-  @Column({ nullable: true })
-  description: string;
+  @ManyToOne(() => UserEntity, (user) => user.messages)
+  @JoinColumn()
+  user: UserEntity;
 
-  @ManyToMany(() => UserEntity)
-  @JoinTable()
-  users: UserEntity[];
+  @ManyToOne(() => RoomEntity, (room) => room.messages)
+  @JoinColumn()
+  room: RoomEntity;
 
   @CreateDateColumn()
   created_at: Date;
