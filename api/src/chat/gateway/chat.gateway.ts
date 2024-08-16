@@ -159,7 +159,11 @@ export class ChatGateway
     const room: RoomI = await this.roomService.getRoom(createdMessage.room.id);
     const joinedUsers: JoinedRoomI[] =
       await this.joinedRoomService.findByRoom(room);
-    // TODO: Send new Message to all joined Users of the room (currently online)
+    console.log(room, joinedUsers);
+    // Send new Message to all joined Users of the room (currently online)
+    for (const user of joinedUsers) {
+      this.server.to(user.socketId).emit('messageAdded', createdMessage);
+    }
   }
 
   // add page +1 to match angular meterial paginator
